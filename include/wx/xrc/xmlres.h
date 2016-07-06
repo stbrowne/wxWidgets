@@ -539,6 +539,9 @@ public:
     wxCoord GetDimension(const wxString& param, wxCoord defaultv = 0,
                          wxWindow *windowToUse = NULL);
 
+    // Gets a size which is not expressed in pixels, so not in dialog units.
+    wxSize GetPairInts(const wxString& param);
+
     // Gets a direction, complains if the value is invalid.
     wxDirection GetDirection(const wxString& param, wxDirection dirDefault = wxLEFT);
 

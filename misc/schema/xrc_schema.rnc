@@ -426,6 +426,7 @@ t_colour     = xsd:string { pattern = "#[0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-z
                xsd:string { pattern = "[^#].*" }
 t_position   = t_size
 t_size       = xsd:string { pattern = "(-?\d+),(-?\d+)d?" }
+t_pair_ints  = xsd:string { pattern = "(-?\d+),(-?\d+)" }
 t_dimension  = xsd:string { pattern = "(-?\d+)d?" }
 
 t_bitmap     = t_url?,
@@ -1536,10 +1537,10 @@ wxSizer_item =
         [xrc:p="o"] element option   {_, t_integer }* &
         [xrc:p="o"] element border   {_, t_dimension }* &
         [xrc:p="o"] element minsize  {_, t_size }* &
-        [xrc:p="o"] element ratio    {_, t_size }* &
+        [xrc:p="o"] element ratio    {_, t_pair_ints }* &
         # TODO: cell{pos,span} are wxGridBagSizer-only and required in it, this is too lax
-        [xrc:p="o"] element cellpos  {_, t_position }* &
-        [xrc:p="o"] element cellspan {_, t_size }* &
+        [xrc:p="o"] element cellpos  {_, t_pair_ints }* &
+        [xrc:p="o"] element cellspan {_, t_pair_ints }* &
         [xrc:p="o"] element flag     {_,
             xsd:string {
                 pattern = "(wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxNORTH|wxSOUTH|wxEAST|wxWEST|wxALL|wxGROW|wxEXPAND|wxSHAPED|wxSTRETCH_NOT|wxALIGN_CENTER|wxALIGN_CENTRE|wxALIGN_LEFT|wxALIGN_RIGHT|wxALIGN_TOP|wxALIGN_BOTTOM|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTRE_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTRE_VERTICAL)( *\| *(wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxNORTH|wxSOUTH|wxEAST|wxWEST|wxALL|wxGROW|wxEXPAND|wxSHAPED|wxSTRETCH_NOT|wxALIGN_CENTER|wxALIGN_CENTRE|wxALIGN_LEFT|wxALIGN_RIGHT|wxALIGN_TOP|wxALIGN_BOTTOM|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTRE_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTRE_VERTICAL))*"

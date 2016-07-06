@@ -2142,6 +2142,29 @@ wxCoord wxXmlResourceHandlerImpl::GetDimension(const wxString& param,
     return wxWindow::FromDIP(sx, windowToUse);
 }
 
+
+wxSize wxXmlResourceHandlerImpl::GetPairInts(const wxString& param)
+{
+    const wxString s = GetParamValue(param);
+    if ( s.empty() )
+        return wxDefaultSize;
+
+    long sx, sy;
+    if (!s.BeforeFirst(wxT(',')).ToLong(&sx) ||
+        !s.AfterLast(wxT(',')).ToLong(&sy))
+    {
+        ReportParamError
+              (
+               param,
+               wxString::Format("cannot parse \"%s\" as pair of integers", s)
+              );
+        return wxDefaultSize;
+    }
+
+    return wxSize(sx, sy);
+}
+
+
 wxDirection
 wxXmlResourceHandlerImpl::GetDirection(const wxString& param, wxDirection dirDefault)
 {
