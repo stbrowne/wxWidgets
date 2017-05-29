@@ -2429,6 +2429,56 @@ bool wxWidgetCocoaImpl::SetBackgroundStyle( wxBackgroundStyle style )
 
 void wxWidgetCocoaImpl::SetLabel( const wxString& title, wxFontEncoding encoding )
 {
+    if ( [m_osxView respondsToSelector:@selector(setAttributedTitle:) ] )
+    {
+        wxFont f = GetWXPeer()->GetFont();
+        wxColour col = GetWXPeer()->GetForegroundColour();
+        if ( f.GetStrikethrough() || f.GetUnderlined() || col.IsOk() )
+        {
+            wxCFStringRef cf(title, encoding );
+
+            NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc]
+                                                     initWithString:cf.AsNSString()];
+
+            [attrString beginEditing];
+            [attrString setAlignment:NSCenterTextAlignment
+                               range:NSMakeRange(0, [attrString length])];
+
+            [attrString addAttribute:NSFontAttributeName
+                               value:f.OSXGetNSFont()
+                               range:NSMakeRange(0, [attrString length])];
+            if ( f.GetStrikethrough() )
+            {
+                [attrString addAttribute:NSStrikethroughStyleAttributeName
+                                   value:@(NSUnderlineStyleSingle)
+                                   range:NSMakeRange(0, [attrString length])];
+            }
+
+            if ( f.GetUnderlined() )
+            {
+                [attrString addAttribute:NSUnderlineStyleAttributeName
+                                   value:@(NSUnderlineStyleSingle)
+                                   range:NSMakeRange(0, [attrString length])];
+
+            }
+
+            if ( col.IsOk() )
+            {
+                [attrString addAttribute:NSForegroundColorAttributeName
+                                   value:col.OSXGetNSColor()
+                                   range:NSMakeRange(0, [attrString length])];
+            }
+
+            [attrString endEditing];
+
+            [(id)m_osxView setAttributedTitle:attrString];
+            
+            [attrString release];
+
+            return;
+        }
+    }
+
     if ( [m_osxView respondsToSelector:@selector(setTitle:) ] )
     {
         wxCFStringRef cf( title , encoding );
@@ -2667,6 +2717,8 @@ void wxWidgetCocoaImpl::SetFont(wxFont const& font, wxColour const&col, long, bo
     NSView* targetView = m_osxView;
     if ( [m_osxView isKindOfClass:[NSScrollView class] ] )
         targetView = [(NSScrollView*) m_osxView documentView];
+    else if ( [m_osxView isKindOfClass:[NSBox class] ] )
+        targetView = [(NSBox*) m_osxView titleCell];
 
     if ([targetView respondsToSelector:@selector(setFont:)])
         [targetView setFont: font.OSXGetNSFont()];
@@ -2675,6 +2727,8 @@ void wxWidgetCocoaImpl::SetFont(wxFont const& font, wxColour const&col, long, bo
                                                                  green:(CGFloat) (col.Green() / 255.0)
                                                                   blue:(CGFloat) (col.Blue() / 255.0)
                                                                  alpha:(CGFloat) (col.Alpha() / 255.0)]];
+    if ([m_osxView respondsToSelector:@selector(setAttributedTitle:)])
+        SetLabel(wxStripMenuCodes(GetWXPeer()->GetLabel(), wxStrip_Mnemonics), GetWXPeer()->GetFont().GetEncoding());
 }
 
 void wxWidgetCocoaImpl::SetToolTip(wxToolTip* tooltip)

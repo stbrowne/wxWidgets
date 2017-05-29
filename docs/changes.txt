@@ -866,6 +866,7 @@ wxOSX:
   events to wxOSX/Cocoa (Igor Korot).
 - Fix several memory leaks in wxDataViewCtrl (John Roberts).
 - Many fixes for tab navigation (ikamakj).
+- Fix setting foreground colour for several controls (Steve Browne).
 
 
 3.0.0: (released 2013-11-11)
