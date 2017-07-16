@@ -865,6 +865,7 @@ wxOSX:
 - Add support for wxEVT_COMBOBOX_DROPDOWN and wxEVT_COMBOBOX_CLOSEUP
   events to wxOSX/Cocoa (Igor Korot).
 - Fix several memory leaks in wxDataViewCtrl (John Roberts).
+- Many fixes for tab navigation (ikamakj).
 
 
 3.0.0: (released 2013-11-11)
