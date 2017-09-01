@@ -549,11 +549,11 @@ wxSize wxRendererMSW::GetCheckBoxSize(wxWindow * WXUNUSED(win))
                   ::GetSystemMetrics(SM_CYMENUCHECK));
 }
 
-int wxRendererMSW::GetHeaderButtonHeight(wxWindow * WXUNUSED(win))
+int wxRendererMSW::GetHeaderButtonHeight(wxWindow *win)
 {
     // some "reasonable" value returned in case of error, it doesn't really
     // correspond to anything but it's better than returning 0
-    static const int DEFAULT_HEIGHT = 20;
+    static const int DEFAULT_HEIGHT = wxWindow::FromDIP(20, win);
 
 
     // create a temporary header window just to get its geometry
@@ -563,6 +563,10 @@ int wxRendererMSW::GetHeaderButtonHeight(wxWindow * WXUNUSED(win))
         return DEFAULT_HEIGHT;
 
     wxON_BLOCK_EXIT1( ::DestroyWindow, hwndHeader );
+
+    // Must ensure the proper font is set or the wrong value will be returned
+    WXHANDLE hFont = (win ? win->GetFont() : wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT)).GetResourceHandle();
+    ::SendMessage(hwndHeader, WM_SETFONT, (WPARAM)hFont, MAKELPARAM(TRUE, 0));
 
     // initialize the struct filled with the values by Header_Layout()
     RECT parentRect = { 0, 0, 100, 100 };

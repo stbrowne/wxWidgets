@@ -41,6 +41,7 @@
     #include "wx/statusbr.h"
     #include "wx/toolbar.h"
     #include "wx/dcclient.h"
+    #include "wx/dcscreen.h"
     #include "wx/scrolbar.h"
     #include "wx/layout.h"
     #include "wx/sizer.h"
@@ -96,6 +97,10 @@ namespace wxMouseCapture
 bool IsInCaptureStack(wxWindowBase* win);
 
 } // wxMouseCapture
+
+// We consider 96 DPI to be the standard value, this is correct at least for
+// MSW, but could conceivably need adjustment for the other platforms.
+static const int BASELINE_DPI = 96;
 
 // ----------------------------------------------------------------------------
 // static data
@@ -789,6 +794,17 @@ wxSize wxWindowBase::DoGetBestSize() const
     best.y += wxMax(0, diff.y);
 
     return best;
+}
+
+double wxWindowBase::GetContentScaleFactor() const
+{
+    // Currently we don't support per-monitor DPI, so it's useless to construct
+    // a DC associated with this window, just use the global value.
+    //
+    // We also use just the vertical component of the DPI because it's the one
+    // that counts most and, in practice, it's equal to the horizontal one
+    // anyhow.
+    return double(wxScreenDC().GetPPI().y) / BASELINE_DPI;
 }
 
 // helper of GetWindowBorderSize(): as many ports don't implement support for
@@ -2846,6 +2862,32 @@ void wxWindowBase::OnInternalIdle()
     if ( wxUpdateUIEvent::CanUpdate(this) )
         UpdateWindowUI(wxUPDATE_UI_FROMIDLE);
 }
+
+ // ----------------------------------------------------------------------------
+// DPI-independent pixels and dialog units translations
+// ----------------------------------------------------------------------------
+
+
+#if 1 //ndef wxHAVE_DPI_INDEPENDENT_PIXELS
+
+/* static */
+wxSize
+wxWindowBase::FromDIP(const wxSize& sz, const wxWindowBase* WXUNUSED(w))
+{
+#if defined(__WXMAC__)
+    return sz;
+#else
+    const wxSize dpi = wxScreenDC().GetPPI();
+
+    // Take care to not scale -1 because it has a special meaning of
+    // "unspecified" which should be preserved.
+    return wxSize(sz.x == -1 ? -1 : wxMulDivInt32(sz.x, dpi.x, BASELINE_DPI),
+        sz.y == -1 ? -1 : wxMulDivInt32(sz.y, dpi.y, BASELINE_DPI));
+#endif
+}
+
+#endif // !wxHAVE_DPI_INDEPENDENT_PIXELS
+
 
 // ----------------------------------------------------------------------------
 // dialog units translations

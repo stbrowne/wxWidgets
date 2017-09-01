@@ -52,13 +52,13 @@ enum
 };
 
 // the gaps between the slider and the labels, in pixels
-const int HGAP = 5;
-const int VGAP = 4;
+#define HGAP FromDIP(5)
+#define VGAP FromDIP(4)
 // the width of the borders including white space
-const int BORDERPAD = 8;
+#define BORDERPAD FromDIP(8)
 // these 2 values are arbitrary:
-const int THUMB = 24;
-const int TICK = 8;
+#define THUMB FromDIP(24)
+#define TICK FromDIP(8)
 
 } // anonymous namespace
 
@@ -510,7 +510,7 @@ void wxSlider::DoMoveWindow(int x, int y, int width, int height)
 wxSize wxSlider::DoGetBestSize() const
 {
     // this value is arbitrary:
-    static const int length = 100;
+    static const int length = FromDIP(100);
 
     int *width;
     wxSize size;

@@ -110,11 +110,11 @@ public:
     #ifdef __WXGTK20__
         // GNOME HIG says to use 6px as the base unit:
         // http://library.gnome.org/devel/hig-book/stable/design-window.html.en
-        return 6;
+        return wxWindow::FromDIP(6, NULL);
     #else
         // FIXME: default border size shouldn't be hardcoded and at the very
         //        least they should depend on the current font size
-        return 5;
+        return wxWindow::FromDIP(5, NULL);
     #endif
 #else
         return 0;

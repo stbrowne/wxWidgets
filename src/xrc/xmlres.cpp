@@ -2083,7 +2083,7 @@ wxSize wxXmlResourceHandlerImpl::GetSize(const wxString& param,
         }
     }
 
-    return wxSize(sx, sy);
+    return wxWindow::FromDIP(wxSize(sx, sy), windowToUse);
 }
 
 
@@ -2139,7 +2139,7 @@ wxCoord wxXmlResourceHandlerImpl::GetDimension(const wxString& param,
         }
     }
 
-    return sx;
+    return wxWindow::FromDIP(sx, windowToUse);
 }
 
 wxDirection

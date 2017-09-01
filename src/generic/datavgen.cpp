@@ -2113,7 +2113,7 @@ void wxDataViewMainWindow::OnPaint( wxPaintEvent &WXUNUSED(event) )
 
                 // we reserve m_lineHeight of horizontal space for the expander
                 // but leave EXPANDER_MARGIN around the expander itself
-                int exp_x = cell_rect.x + indent + EXPANDER_MARGIN;
+                int exp_x = cell_rect.x + indent + FromDIP(EXPANDER_MARGIN);
 
                 indent += m_lineHeight;
 
@@ -2123,9 +2123,9 @@ void wxDataViewMainWindow::OnPaint( wxPaintEvent &WXUNUSED(event) )
                     dc.SetPen( m_penExpander );
                     dc.SetBrush( wxNullBrush );
 
-                    int exp_size = m_lineHeight - 2*EXPANDER_MARGIN;
+                    int exp_size = m_lineHeight - 2*FromDIP(EXPANDER_MARGIN);
                     int exp_y = cell_rect.y + (cell_rect.height - exp_size)/2
-                                   + EXPANDER_MARGIN - EXPANDER_OFFSET;
+                                   + FromDIP(EXPANDER_MARGIN) - FromDIP(EXPANDER_OFFSET);
 
                     const wxRect rect(exp_x, exp_y, exp_size, exp_size);
 

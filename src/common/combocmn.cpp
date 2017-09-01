@@ -1225,7 +1225,7 @@ void wxComboCtrlBase::CalculateAreas( int btnWidth )
             // Make very small buttons square, as it makes
             // them accommodate arrow image better and still
             // looks decent.
-            if ( height > 18 )
+            if ( height > FromDIP(18) )
                 butWidth = (height*butWidth)/bestHeight;
             else
                 butWidth = butHeight;
