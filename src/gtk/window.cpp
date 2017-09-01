@@ -3788,6 +3788,7 @@ void wxWindowGTK::RealizeTabOrder()
             {
                 wxWindowGTK *win = *i;
 
+                win->RealizeTabOrder();
                 bool focusableFromKeyboard = win->AcceptsFocusFromKeyboard();
 
                 if ( mnemonicWindow )

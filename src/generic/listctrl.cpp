@@ -806,6 +806,9 @@ void wxListLineData::DrawInReportMode( wxDC *dc,
         wxListItemData *item = node->GetData();
 
         int width = m_owner->GetColumnWidth(col);
+        if (width == 0)
+            continue;
+        
         int xOld = x;
         x += width;
 

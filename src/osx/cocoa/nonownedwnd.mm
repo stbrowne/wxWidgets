@@ -683,14 +683,25 @@ long style, long extraStyle, const wxString& WXUNUSED(name) )
         ];
     
     // if we just have a title bar with no buttons needed, hide them
-    if ( (windowstyle & NSTitledWindowMask) && 
-        !(style & wxCLOSE_BOX) && !(style & wxMAXIMIZE_BOX) && !(style & wxMINIMIZE_BOX) )
+    if ( (windowstyle & NSTitledWindowMask) )
     {
-        [[m_macWindow standardWindowButton:NSWindowZoomButton] setHidden:YES];
-        [[m_macWindow standardWindowButton:NSWindowCloseButton] setHidden:YES];
-        [[m_macWindow standardWindowButton:NSWindowMiniaturizeButton] setHidden:YES];
+        if ( !(style & wxMAXIMIZE_BOX) && !(style & wxCLOSE_BOX) && !(style & wxMINIMIZE_BOX) )
+        {
+            [[m_macWindow standardWindowButton:NSWindowZoomButton] setHidden:YES];
+            [[m_macWindow standardWindowButton:NSWindowCloseButton] setHidden:YES];
+            [[m_macWindow standardWindowButton:NSWindowMiniaturizeButton] setHidden:YES];
+        }
+        else
+        {
+            if ( !(style & wxMAXIMIZE_BOX) )
+                [[m_macWindow standardWindowButton:NSWindowZoomButton] setEnabled:NO];
+            if ( !(style & wxCLOSE_BOX) )
+                [[m_macWindow standardWindowButton:NSWindowCloseButton] setEnabled:NO];
+            if ( !(style & wxMINIMIZE_BOX) )
+                [[m_macWindow standardWindowButton:NSWindowMiniaturizeButton] setEnabled:NO];
+        }
     }
-    
+
     // If the parent is modal, windows with wxFRAME_FLOAT_ON_PARENT style need
     // to be in kCGUtilityWindowLevel and not kCGFloatingWindowLevel to stay
     // above the parent.

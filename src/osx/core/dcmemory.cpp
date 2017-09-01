@@ -85,7 +85,9 @@ void wxMemoryDCImpl::DoSelect( const wxBitmap& bitmap )
         {
             CGContextSetFillColorSpace( bmCtx, genericColorSpace );
             CGContextSetStrokeColorSpace( bmCtx, genericColorSpace );
-            SetGraphicsContext( wxGraphicsContext::CreateFromNative( bmCtx ) );
+            wxGraphicsContext* context = wxGraphicsContext::CreateFromNative( bmCtx );
+            context->EnableOffset(true);
+            SetGraphicsContext( context );
             if (m_graphicContext)
                 m_graphicContext->EnableOffset(true);
         }

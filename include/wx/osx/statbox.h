@@ -14,7 +14,7 @@
 #include "wx/control.h"
 
 // Group box
-class WXDLLIMPEXP_CORE wxStaticBox: public wxControl
+class WXDLLIMPEXP_CORE wxStaticBox: public wxNavigationEnabled<wxControl>
 {
   DECLARE_DYNAMIC_CLASS(wxStaticBox)
 

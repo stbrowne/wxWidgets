@@ -399,7 +399,12 @@ NSView* wxMacEditHelper::ms_viewCurrentlyEdited = nil;
 {
     // from Technical Q&A QA1461
     if (flag) {
-        [self setTextColor: [NSColor controlTextColor]];
+        wxWidgetCocoaImpl *impl = (wxWidgetCocoaImpl *)wxWidgetImpl::FindFromWXWidget( self );
+        wxWindow *peer = (impl ? impl->GetWXPeer() : NULL);
+        if (peer)
+            [self setTextColor: peer->GetForegroundColour().OSXGetNSColor()];
+        else
+            [self setTextColor: [NSColor controlTextColor]];
 
     } else {
         [self setTextColor: [NSColor disabledControlTextColor]];
@@ -482,7 +487,12 @@ NSView* wxMacEditHelper::ms_viewCurrentlyEdited = nil;
         // For an explanation, see
         // http://www.cocoabuilder.com/archive/message/cocoa/2006/7/21/168028
         if (flag) {
-            [self setTextColor: [NSColor controlTextColor]];
+            wxWidgetCocoaImpl *impl = (wxWidgetCocoaImpl *)wxWidgetImpl::FindFromWXWidget( self );
+            wxWindow *peer = (impl ? impl->GetWXPeer() : NULL);
+            if (peer)
+                [self setTextColor: peer->GetForegroundColour().OSXGetNSColor()];
+            else
+                [self setTextColor: [NSColor controlTextColor]];
         } else {
             [self setTextColor: [NSColor secondarySelectedControlColor]];
         }

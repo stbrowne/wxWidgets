@@ -174,7 +174,13 @@ public:
 
     void UpdateLabel()
     {
-        wxString labelStr = wxStripMenuCodes(m_label);
+        // Use an empty string if we're not displaying text
+        wxString labelStr;
+        wxToolBar *tbar = (wxToolBar*) GetToolBar();
+        int style = (tbar ? tbar->GetWindowStyleFlag() : 0);
+        if ( (style & (wxTB_NOICONS | wxTB_TEXT)) != 0 )
+            labelStr = wxStripMenuCodes(m_label);
+
         wxCFStringRef l(labelStr, GetToolBarFontEncoding());
         wxCFStringRef sh( GetShortHelp(), GetToolBarFontEncoding() );
 #if wxOSX_USE_NATIVE_TOOLBAR
@@ -189,7 +195,29 @@ public:
         }
 #endif
         if ( IsButton() )
+        {
             [(NSButton*)m_controlHandle setTitle:l.AsNSString()];
+
+            if ( style & wxTB_NOICONS )
+                [m_controlHandle setImagePosition:NSNoImage];
+            else if ( style & wxTB_TEXT )
+                [m_controlHandle setImagePosition:NSImageAbove];
+            else
+                [m_controlHandle setImagePosition:NSImageOnly];
+
+            if ( (style & (wxTB_NOICONS | wxTB_TEXT)) != 0 ) 
+            {
+                [m_controlHandle sizeToFit];
+            }
+            else if (tbar)
+            {
+                wxSize toolsize = tbar->GetToolSize();
+                NSRect frame = [m_controlHandle frame];
+                frame.size.width = toolsize.x;
+                frame.size.height = toolsize.y + 2;
+                [m_controlHandle setFrame:frame];
+            }
+        }
 
         if ( m_controlHandle )
         {
@@ -588,7 +616,10 @@ void wxToolBarTool::UpdateImages()
 void wxToolBarTool::UpdateToggleImage( bool toggle )
 {
 #if wxOSX_USE_NATIVE_TOOLBAR
-    if (m_toolbarItem != NULL )
+    // Avoid setting the image if we're not showing icons because the image may be invalid
+    wxToolBar *tbar = (wxToolBar*) GetToolBar();
+    int style = (tbar ? tbar->GetWindowStyleFlag() : 0);
+    if (m_toolbarItem != NULL && !(style & wxTB_NOICONS))
     {
         // the native toolbar item only has a 'selected' state (one for one toolbar)
         // so we emulate the toggle here
@@ -597,12 +628,9 @@ void wxToolBarTool::UpdateToggleImage( bool toggle )
         else
             [m_toolbarItem setImage:m_bmpNormal.GetNSImage()];
     }
-    else
 #endif
-    {
-        if ( IsButton() )
-            [(NSButton*)m_controlHandle setState:(toggle ? NSOnState : NSOffState)];
-    }
+    if ( IsButton() )
+        [(NSButton*)m_controlHandle setState:(toggle ? NSOnState : NSOffState)];
 }
 
 wxToolBarTool::wxToolBarTool(
@@ -870,6 +898,21 @@ void wxToolBar::SetWindowStyleFlag( long style )
         [(NSToolbar*) m_macToolbar setDisplayMode:mode];
     }
 #endif
+
+    wxToolBarTool *tool;
+    wxToolBarToolsList::compatibility_iterator node = m_tools.GetFirst();
+    while ( node )
+    {
+        tool = (wxToolBarTool *) node->GetData();
+        if ( tool != NULL )
+        {
+            tool->UpdateLabel();
+        }
+        
+        node = node->GetNext();
+    }
+
+    InvalidateBestSize();
 }
 
 #if wxOSX_USE_NATIVE_TOOLBAR
@@ -1413,7 +1456,7 @@ bool wxToolBar::DoInsertTool(size_t WXUNUSED(pos), wxToolBarToolBase *toolBase)
     
     wxSize toolSize = GetToolSize();
     WXWidget controlHandle = NULL;
-    NSRect toolrect = NSMakeRect(0, 0, toolSize.x, toolSize.y );
+    NSRect toolrect = NSMakeRect(0, 0, toolSize.x, toolSize.y + 2);
 
 #if wxOSX_USE_NATIVE_TOOLBAR
     wxString label = tool->GetLabel();
@@ -1495,14 +1538,6 @@ bool wxToolBar::DoInsertTool(size_t WXUNUSED(pos), wxToolBarToolBase *toolBase)
                 if ( !(style & wxTB_NOICONS) )
                     tool->UpdateImages();
                 tool->UpdateLabel();
-
-                if ( style & wxTB_NOICONS )
-                    [v setImagePosition:NSNoImage];
-                else if ( style & wxTB_TEXT )
-                    [v setImagePosition:NSImageAbove];
-                else
-                    [v setImagePosition:NSImageOnly];
-                [v sizeToFit];
                 
 #if 0
                 InstallControlEventHandler(

@@ -1670,6 +1670,14 @@ void wxWindowMac::RemoveChild( wxWindowBase *child )
     if ( child == m_growBox )
         m_growBox = NULL ;
 #endif
+    if (!child->IsBeingDeleted() && !child->IsTopLevel())
+    {
+        // Must be removed prior to RemoveChild and next AddChild call
+        // Otherwise the next AddChild may freeze the wrong window
+        wxWindowMac *mac = (wxWindowMac *)child;
+        if (mac->GetPeer() && mac->GetPeer()->IsOk())
+            mac->GetPeer()->RemoveFromParent();
+    }
     wxWindowBase::RemoveChild( child ) ;
 }
 
@@ -2581,10 +2589,9 @@ bool wxWindowMac::Reparent(wxWindowBase *newParentBase)
     if ( !wxWindowBase::Reparent(newParent) )
         return false;
 
-    GetPeer()->RemoveFromParent();
     GetPeer()->Embed( GetParent()->GetPeer() );
 
-    MacChildAdded();
+    GetParent()->MacChildAdded();
     return true;
 }
 
