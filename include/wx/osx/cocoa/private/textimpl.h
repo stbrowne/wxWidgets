@@ -29,7 +29,7 @@ public :
     }
     virtual ~wxNSTextBase() { }
 
-    virtual bool ShouldHandleKeyNavigation(const wxKeyEvent &event) const wxOVERRIDE;
+    virtual bool ShouldHandleKeyNavigation(const wxKeyEvent &event) const;
 };
 
 // implementation exposed, so that search control can pull it
