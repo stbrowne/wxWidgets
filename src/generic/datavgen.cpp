@@ -2784,6 +2784,10 @@ void wxDataViewMainWindow::SelectRow( unsigned int row, bool on )
             RefreshRow( row );
         }
     }
+
+#ifdef __WXMAC__
+    Refresh();
+#endif
 }
 
 void wxDataViewMainWindow::SelectRows( unsigned int from, unsigned int to, bool on )
@@ -2809,7 +2813,12 @@ void wxDataViewMainWindow::SelectRows( unsigned int from, unsigned int to, bool 
                 m_selection.Remove( i );
         }
     }
+
+#ifdef __WXMAC__
+    Refresh();
+#else
     RefreshRows( from, to );
+#endif
 }
 
 void wxDataViewMainWindow::Select( const wxArrayInt& aSelections )
