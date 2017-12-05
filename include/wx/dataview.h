@@ -34,7 +34,7 @@ class WXDLLIMPEXP_FWD_CORE wxImageList;
     #define wxHAS_GENERIC_DATAVIEWCTRL
 #endif
 
-#ifdef wxHAS_GENERIC_DATAVIEWCTRL
+#if defined(wxHAS_GENERIC_DATAVIEWCTRL) && !defined(wxUSE_GENERICDATAVIEWCTRL)
     // this symbol doesn't follow the convention for wxUSE_XXX symbols which
     // are normally always defined as either 0 or 1, so its use is deprecated
     // and it only exists for backwards compatibility, don't use it any more
